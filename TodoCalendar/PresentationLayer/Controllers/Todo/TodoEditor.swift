@@ -25,7 +25,7 @@ class TodoEditor: UIViewController {
     let startDatePicker: UIDatePicker = {
         let dp = UIDatePicker()
         dp.datePickerMode = .dateAndTime
-        dp.preferredDatePickerStyle = .wheels
+        dp.preferredDatePickerStyle = .compact
         dp.translatesAutoresizingMaskIntoConstraints = false
         return dp
     }()
@@ -33,7 +33,7 @@ class TodoEditor: UIViewController {
     let endDatePicker: UIDatePicker = {
         let dp = UIDatePicker()
         dp.datePickerMode = .dateAndTime
-        dp.preferredDatePickerStyle = .wheels
+        dp.preferredDatePickerStyle = .compact
         dp.translatesAutoresizingMaskIntoConstraints = false
         return dp
     }()
@@ -109,12 +109,47 @@ extension TodoEditor {
     func configureUI() {
         
         view.backgroundColor = .white
+        let startLabel = {
+            let label = UILabel()
+            label.text = "Set Start Date/Time"
+            label.widthAnchor.constraint(equalToConstant: 120).isActive = true
+            label.translatesAutoresizingMaskIntoConstraints = false
+            return label
+        }()
+        let endLabel = {
+            let label = UILabel()
+            label.text = "Set End Date/Time"
+            label.widthAnchor.constraint(equalToConstant: 120).isActive = true
+            label.translatesAutoresizingMaskIntoConstraints = false
+            return label
+        }()
         
+        let startStackView = {
+            let start = [startLabel, startDatePicker]
+            let sv = UIStackView(arrangedSubviews: start)
+            sv.axis = .horizontal
+            sv.alignment = .center
+            sv.spacing = 8
+            sv.distribution = .fill
+            sv.translatesAutoresizingMaskIntoConstraints = false
+            return sv
+        }()
+        let endStackView = {
+            let end = [endLabel, endDatePicker]
+            let sv = UIStackView(arrangedSubviews: end)
+            sv.axis = .horizontal
+            sv.alignment = .center
+            sv.spacing = 8
+            sv.distribution = .fill
+            sv.translatesAutoresizingMaskIntoConstraints = false
+            return sv
+        }()
         view.addSubview(titleTextField)
-        view.addSubview(startDatePicker)
-        view.addSubview(endDatePicker)
+        view.addSubview(startStackView)
+        view.addSubview(endStackView)
         view.addSubview(saveOrUpdateButton)
         
+    
         saveOrUpdateButton.addTarget(self, action: #selector(saveOrUpdateTodoTapped), for: .touchUpInside)
         
         NSLayoutConstraint.activate([
@@ -123,18 +158,15 @@ extension TodoEditor {
         titleTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
         titleTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
         
-        // startDatePicker 레이아웃
-        startDatePicker.topAnchor.constraint(equalTo: titleTextField.bottomAnchor, constant: 20),
-        startDatePicker.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-        startDatePicker.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-        
-        // endDatePicker 레이아웃
-        endDatePicker.topAnchor.constraint(equalTo: startDatePicker.bottomAnchor, constant: 20),
-        endDatePicker.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-        endDatePicker.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+        startStackView.topAnchor.constraint(equalTo: titleTextField.bottomAnchor, constant: 20),
+        startStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+        startStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+        endStackView.topAnchor.constraint(equalTo: startStackView.bottomAnchor, constant: 20),
+        endStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+        endStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
         
         // saveOrUpdateButton 레이아웃
-        saveOrUpdateButton.topAnchor.constraint(equalTo: endDatePicker.bottomAnchor, constant: 20),
+        saveOrUpdateButton.topAnchor.constraint(equalTo: endStackView.bottomAnchor, constant: 20),
         saveOrUpdateButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
         saveOrUpdateButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
         saveOrUpdateButton.heightAnchor.constraint(equalToConstant: 50) // 버튼의 높이
@@ -146,6 +178,8 @@ extension TodoEditor {
             titleTextField.placeholder = "set New ToDo"
         }
     }
+    
+    
 }
 extension TodoEditor: UITextFieldDelegate {
     private func textViewDidBeginEditing(_ textView: UITextView) {
